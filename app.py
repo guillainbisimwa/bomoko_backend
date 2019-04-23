@@ -21,7 +21,7 @@ class Utilisateur_List(Resource):
     parser.add_argument('is_validate', type=int, required=False, help='is_validate du User') 
     parser.add_argument('id_group', type=str, required=False, help='id_group du User') 
     parser.add_argument('type', type=int, required=False, help='type du User') 
-    parser.add_argument('sexe', type=int, required=False, help='sexe du User') 
+    parser.add_argument('sexe', type=str, required=False, help='sexe du User') 
     
     def get(self, user):
         item = Utilisateurs.find_by_phone(user)

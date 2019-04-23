@@ -15,7 +15,7 @@ class Utilisateurs(db.Model):
     id_group = db.Column(db.String(30), unique=False, nullable=True)
     
     type = db.Column(db.Integer, unique=False, nullable=False)
-    sexe = db.Column(db.Integer,  unique=False, nullable=False)
+    sexe = db.Column(db.String(1),  unique=False, nullable=False)
     
     def __init__(self, phone, nom, postnom, password, adress, is_validate, id_group, type, sexe):
         self.phone = phone
