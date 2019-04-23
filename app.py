@@ -7,7 +7,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-from base import db, Utilisateurs, Groups
+from base import db, Utilisateurs, Groups, Coops
 db.init_app(app)
 app.app_context().push()
 db.create_all()
@@ -72,6 +72,8 @@ class Group_List(Resource):
     parser.add_argument('nom', type=str, required=False, help='Nom of the group')
     parser.add_argument('adress', type=str, required=False, help='Adress of the group')
     parser.add_argument('type', type=int, required=True, help='Gross collection of the group')
+    parser.add_argument('phone_chef', type=str, required=False, help='Phone_chef of the group')
+    parser.add_argument('id_coop', type=str, required=False, help='id_coop du Group')
     
     def get(self, group):
         item = Groups.find_by_nom(group)
@@ -83,7 +85,7 @@ class Group_List(Resource):
         if Groups.find_by_nom(group):
             return {' Message': 'Groups with the name {} already exists'.format(group)}
         args = Group_List.parser.parse_args()
-        item = Groups(group, args['adress'], args['type'])
+        item = Groups(group, args['adress'], args['type'], args['phone_chef'] , args['id_coop'])
         item.save_to()
         return item.json()
         
@@ -92,13 +94,14 @@ class Group_List(Resource):
         item = Groups.find_by_nom(group)
         if item:
             item.nom = args['nom']
+            item.phone_chef = args['phone_chef']
             item.adress = args['adress']
             item.type = args['type']
+            item.id_coop = args['id_coop']
             item.save_to()
             return {'Groups': item.json()}
         return {' Message': 'Group with the name {} does not exist'.format(group)}
-        
-            
+
     def delete(self, group):
         item  = Groups.find_by_nom(group)
         if item:
@@ -111,10 +114,59 @@ class All_Groups(Resource):
         return {'Groups': list(map(lambda x: x.json(), Groups.query.all()))}
 
 
+class Coop_List(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('nom', type=str, required=False, help='Nom of the coop')
+    parser.add_argument('adress', type=str, required=False, help='Adress of the coop')
+    parser.add_argument('type', type=int, required=True, help='Gross collection of the coop')
+    parser.add_argument('phone_chef', type=str, required=False, help='Phone_chef of the coop')
+    
+    def get(self, coop):
+        item = Coops.find_by_nom(coop)
+        if item:
+            return item.json()
+        return {'Message': 'Coops is not found'}
+    
+    def post(self, coop):
+        if Coops.find_by_nom(coop):
+            return {' Message': 'Coops with the name {} already exists'.format(coop)}
+        args = Coop_List.parser.parse_args()
+        item = Coops(coop, args['adress'], args['type'], args['phone_chef'])
+        item.save_to()
+        return item.json()
+        
+    def put(self, coop):
+        args = Coop_List.parser.parse_args()
+        item = Coops.find_by_nom(coop)
+        if item:
+            item.nom = args['nom']
+            item.phone_chef = args['phone_chef']
+            item.adress = args['adress']
+            item.type = args['type']
+            item.save_to()
+            return {'Coops': item.json()}
+        return {' Message': 'Coop with the name {} does not exist'.format(coop)}
+
+    def delete(self, coop):
+        item  = Coops.find_by_nom(coop)
+        if item:
+            item.delete_()
+            return {'Message': '{} has been deleted from records'.format(coop)}
+        return {'Message': '{} is already not on the list'.format(coop)}
+    
+class All_Coops(Resource):
+    def get(self):
+        return {'Coops': list(map(lambda x: x.json(), Coops.query.all()))}
+
+
 api.add_resource(All_Utilisateurs, '/users/')
 api.add_resource(Utilisateur_List, '/user/<string:user>')
+
 api.add_resource(All_Groups, '/groups/')
 api.add_resource(Group_List, '/group/<string:group>')
+
+api.add_resource(All_Coops, '/coops/')
+api.add_resource(Coop_List, '/coop/<string:coop>')
 
 if __name__=='__main__':
     
