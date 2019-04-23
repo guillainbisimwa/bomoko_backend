@@ -10,33 +10,33 @@ class Utilisateurs(db.Model):
     adress = db.Column(db.String(30), unique=False, nullable=False)
 
     is_validate = db.Column(db.Integer, unique=False, nullable=False)
-    is_chef_group = db.Column(db.Integer, unique=False, nullable=False)
+    #is_validate = Column(Boolean, unique=False, default=TruFe)
 
     id_group = db.Column(db.String(30), unique=False, nullable=True)
     
     type = db.Column(db.Integer, unique=False, nullable=False)
     sexe = db.Column(db.Integer,  unique=False, nullable=False)
     
-    def __init__(self, phone, nom, postnom, password, adress, is_validate, is_chef_group, id_group, type, sexe):
+    def __init__(self, phone, nom, postnom, password, adress, is_validate, id_group, type, sexe):
         self.phone = phone
         self.nom = nom
         self.postnom = postnom
         self.password = password
         self.adress = adress
         self.is_validate = is_validate
-        self.is_chef_group = is_chef_group
         self.id_group = id_group
         self.type = type
         self.sexe = sexe
         
     def json(self):
         return {
+            'id': self.id,
+            'phone': self.phone,
             'nom': self.nom,
             'postnom': self.postnom,
             'password': self.password,
             'adress': self.adress,
             'is_validate': self.is_validate,
-            'is_chef_group': self.is_chef_group,
             'id_group': self.id_group,
             'type': self.type,
             'sexe': self.sexe
@@ -67,7 +67,7 @@ class Groups(db.Model):
         self.type = type
         
     def json(self):
-        return {'Nom': self.nom, 'Adress': self.adress, 'Type': self.type}
+        return {'Nom': self.nom, 'Adress': self.adress, 'Type': self.type, 'id':self.id}
     
     @classmethod
     def find_by_nom(cls, nom):

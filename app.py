@@ -19,7 +19,6 @@ class Utilisateur_List(Resource):
     parser.add_argument('password', type=str, required=False, help='password du User') 
     parser.add_argument('adress', type=str, required=False, help='adress du User') 
     parser.add_argument('is_validate', type=int, required=False, help='is_validate du User') 
-    parser.add_argument('is_chef_group', type=int, required=False, help='is_chef_group du User') 
     parser.add_argument('id_group', type=str, required=False, help='id_group du User') 
     parser.add_argument('type', type=int, required=False, help='type du User') 
     parser.add_argument('sexe', type=int, required=False, help='sexe du User') 
@@ -34,7 +33,7 @@ class Utilisateur_List(Resource):
         if Utilisateurs.find_by_phone(user):
             return {' Message': 'User with the phone {} already exists'.format(user)}
         args = Utilisateur_List.parser.parse_args()
-        item = Utilisateurs(user, args['nom'], args['postnom'], args['password'], args['adress'], args['is_validate'], args['is_chef_group'],args['id_group'],args['type'],args['sexe'] )
+        item = Utilisateurs(user, args['nom'], args['postnom'], args['password'], args['adress'], args['is_validate'], args['id_group'],args['type'],args['sexe'] )
         item.save_to()
         return item.json()
         
@@ -47,13 +46,12 @@ class Utilisateur_List(Resource):
             item.password = args['password']
             item.adress = args['adress']
             item.is_validate = args['is_validate']
-            item.is_chef_group = args['is_chef_group']
             item.id_group = args['id_group']
             item.type = args['type']
             item.sexe = args['sexe']
             item.save_to()
             return {'User': item.json()}
-        item = Utilisateurs(user, args['nom'], args['postnom'], args['password'], args['adress'], args['is_validate'], args['is_chef_group'],args['id_group'],args['type'],args['sexe'])
+        item = Utilisateurs(user, args['nom'], args['postnom'], args['password'], args['adress'], args['is_validate'], args['id_group'],args['type'],args['sexe'])
         item.save_to()
         return item.json()
             
