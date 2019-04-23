@@ -14,14 +14,14 @@ db.create_all()
 
 class Utilisateur_List(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('nom', type=str, required=True, help='nom du User') 
-    parser.add_argument('postnom', type=str, required=False, help='postnom du User') 
-    parser.add_argument('password', type=str, required=False, help='password du User') 
-    parser.add_argument('adress', type=str, required=False, help='adress du User') 
-    parser.add_argument('is_validate', type=int, required=False, help='is_validate du User') 
-    parser.add_argument('id_group', type=str, required=False, help='id_group du User') 
-    parser.add_argument('type', type=int, required=False, help='type du User') 
-    parser.add_argument('sexe', type=str, required=False, help='sexe du User') 
+    parser.add_argument('nom', type=str, required=True, help='nom du User')
+    parser.add_argument('postnom', type=str, required=False, help='postnom du User')
+    parser.add_argument('password', type=str, required=False, help='password du User')
+    parser.add_argument('adress', type=str, required=False, help='adress du User')
+    parser.add_argument('is_validate', type=int, required=False, help='is_validate du User')
+    parser.add_argument('id_group', type=str, required=False, help='id_group du User')
+    parser.add_argument('type', type=int, required=False, help='type du User')
+    parser.add_argument('sexe', type=str, required=False, help='sexe du User')
     
     def get(self, user):
         item = Utilisateurs.find_by_phone(user)
@@ -60,7 +60,7 @@ class Utilisateur_List(Resource):
         if item:
             item.delete_()
             return {'Message': '{} has been deleted from records'.format(user)}
-        return {'Message': '{} is already not on the list'.format()}
+        return {'Message': '{} is already not on the list'.format(user)}
     
 class All_Utilisateurs(Resource):
     def get(self):
@@ -90,6 +90,7 @@ class Group_List(Resource):
         args = Group_List.parser.parse_args()
         item = Groups.find_by_nom(group)
         if item:
+            item.adress = args['adress']
             item.type = args['type']
             item.save_to()
             return {'Groups': item.json()}
@@ -102,7 +103,7 @@ class Group_List(Resource):
         if item:
             item.delete_()
             return {'Message': '{} has been deleted from records'.format(group)}
-        return {'Message': '{} is already not on the list'.format()}
+        return {'Message': '{} is already not on the list'.format(group)}
     
 class All_Groups(Resource):
     def get(self):
