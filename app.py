@@ -14,6 +14,7 @@ db.create_all()
 
 class Utilisateur_List(Resource):
     parser = reqparse.RequestParser()
+    parser.add_argument('phone', type=str, required=False, help='Phone du User')
     parser.add_argument('nom', type=str, required=True, help='nom du User')
     parser.add_argument('postnom', type=str, required=False, help='postnom du User')
     parser.add_argument('password', type=str, required=False, help='password du User')
@@ -41,6 +42,7 @@ class Utilisateur_List(Resource):
         args = Utilisateur_List.parser.parse_args()
         item = Utilisateurs.find_by_phone(user)
         if item:
+            item.phone = args['phone']
             item.nom = args['nom']
             item.postnom = args['postnom']
             item.password = args['password']
@@ -51,9 +53,7 @@ class Utilisateur_List(Resource):
             item.sexe = args['sexe']
             item.save_to()
             return {'User': item.json()}
-        item = Utilisateurs(user, args['nom'], args['postnom'], args['password'], args['adress'], args['is_validate'], args['id_group'],args['type'],args['sexe'])
-        item.save_to()
-        return item.json()
+        return {' Message': 'User with the phone {} does not exist'.format(user)}
             
     def delete(self, user):
         item  = Utilisateurs.find_by_phone(user)
@@ -69,6 +69,7 @@ class All_Utilisateurs(Resource):
 
 class Group_List(Resource):
     parser = reqparse.RequestParser()
+    parser.add_argument('nom', type=str, required=False, help='Nom of the group')
     parser.add_argument('adress', type=str, required=False, help='Adress of the group')
     parser.add_argument('type', type=int, required=True, help='Gross collection of the group')
     
@@ -90,13 +91,13 @@ class Group_List(Resource):
         args = Group_List.parser.parse_args()
         item = Groups.find_by_nom(group)
         if item:
+            item.nom = args['nom']
             item.adress = args['adress']
             item.type = args['type']
             item.save_to()
             return {'Groups': item.json()}
-        item = Groups(group, args['adress'], args['type'])
-        item.save_to()
-        return item.json()
+        return {' Message': 'Group with the name {} does not exist'.format(group)}
+        
             
     def delete(self, group):
         item  = Groups.find_by_nom(group)
