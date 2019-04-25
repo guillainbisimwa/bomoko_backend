@@ -54,7 +54,6 @@ class Utilisateurs(db.Model):
         db.session.delete(self)
         db.session.commit()
         
-
 class Groups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(30), unique=True, nullable=False)
@@ -63,7 +62,6 @@ class Groups(db.Model):
     phone_chef = db.Column(db.String(30), unique=False, nullable=False)
     id_coop = db.Column(db.String(30), unique=False, nullable=True)
 
-    
     def __init__(self, nom, adress, type, phone_chef, id_coop):
         self.nom = nom
         self.adress = adress
@@ -72,7 +70,7 @@ class Groups(db.Model):
         self.id_coop = id_coop
         
     def json(self):
-        return {'Nom': self.nom, 'Adress': self.adress, 'Type': self.type,'id_coop':self.id_coop, 'Phone_chef':self.phone_chef, 'id':self.id}
+        return {'id':self.id, 'Nom': self.nom, 'Adress': self.adress, 'Type': self.type,'id_coop':self.id_coop, 'Phone_chef':self.phone_chef}
     
     @classmethod
     def find_by_nom(cls, nom):
@@ -100,11 +98,45 @@ class Coops(db.Model):
         self.phone_chef = phone_chef
         
     def json(self):
-        return {'Nom': self.nom, 'Adress': self.adress, 'Type': self.type, 'Phone_chef':self.phone_chef, 'id':self.id}
+        return {'id':self.id, 'Nom': self.nom, 'Adress': self.adress, 'Type': self.type, 'Phone_chef':self.phone_chef}
     
     @classmethod
     def find_by_nom(cls, nom):
         return cls.query.filter_by(nom=nom).first()
+    
+    def save_to(self):
+        db.session.add(self)
+        db.session.commit()
+        
+    def delete_(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class Credits(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    somme = db.Column(db.Integer, unique=False, nullable=False)
+    date_demand = db.Column(db.Integer, unique=False, nullable=False)
+    taux = db.Column(db.Integer, unique=False, nullable=False)
+    duree = db.Column(db.Integer, unique=False, nullable=False)
+    etat = db.Column(db.Integer, unique=False, nullable=False)
+    motif = db.Column(db.String(30), unique=False, nullable=False)
+    phone_user = db.Column(db.String(30), unique=False, nullable=False)
+    
+    def __init__(self, somme, date_demand, taux, duree, etat, motif, phone_user):
+        self.somme = somme
+        self.date_demand = date_demand
+        self.taux = taux
+        self.duree = duree
+        self.etat = etat
+        self.motif = motif
+        self.phone_user = phone_user
+
+    def json(self):
+        return {'somme' : self.somme, 'date_demand' : self.date_demand, 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif, 'phone_user' : self.phone_user,'id' : self.id}
+    
+    @classmethod
+    def find_by_phone_user(cls, phone_user):
+        return cls.query.filter_by(phone_user=phone_user).first()
     
     def save_to(self):
         db.session.add(self)

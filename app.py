@@ -7,7 +7,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-from base import db, Utilisateurs, Groups, Coops
+from base import db, Utilisateurs, Groups, Coops, Credits
 db.init_app(app)
 app.app_context().push()
 db.create_all()
@@ -159,6 +159,58 @@ class All_Coops(Resource):
         return {'Coops': list(map(lambda x: x.json(), Coops.query.all()))}
 
 
+class Credit_List(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('somme', type=int, required=True, help='somme collection of the credit')
+    parser.add_argument('date_demand', type=int, required=True, help='date_demand collection of the credit')
+    parser.add_argument('taux', type=int, required=True, help='taux collection of the credit')
+    parser.add_argument('duree', type=int, required=True, help='duree collection of the credit')
+    parser.add_argument('etat', type=int, required=True, help='etat collection of the credit')
+    parser.add_argument('motif', type=str, required=True, help='motif collection of the credit')
+    # parser.add_argument('phone_user', type=str, required=False, help='phone_user collection of the credit')
+
+    def get(self, credit):
+        item = Credits.find_by_phone_user(credit)
+        if item:
+            return item.json()
+        return {'Message': 'Credits is not found'}
+    
+    def post(self, credit):
+        if Credits.find_by_phone_user(credit):
+            return {' Message': 'Credits with the same phone user {} already exists'.format(credit)}
+        args = Credit_List.parser.parse_args()
+        item = Credits(credit, args['somme'], args['date_demand'], args['taux'], args['duree'], args['etat'], args['motif'])
+        item.save_to()
+        return item.json()
+        
+    def put(self, credit):
+        args = Credit_List.parser.parse_args()
+        item = Credits.find_by_phone_user(credit)
+        if item:
+            item.somme = args['somme']
+            item.date_demand = args['date_demand']
+            item.taux = args['taux']
+            item.duree = args['duree']
+            item.etat = args['etat']
+            item.motif = args['motif']
+            item.phone_user = args['phone_user']
+
+            item.save_to()
+            return {'Credits': item.json()}
+        return {' Message': 'Credit with the phone {} does not exist'.format(credit)}
+
+    def delete(self, credit):
+        item  = Credits.find_by_phone_user(credit)
+        if item:
+            item.delete_()
+            return {'Message': '{} has been deleted from records'.format(credit)}
+        return {'Message': '{} is already not on the list'.format(credit)}
+    
+class All_Credits(Resource):
+    def get(self):
+        return {'Credits': list(map(lambda x: x.json(), Credits.query.all()))}
+
+
 api.add_resource(All_Utilisateurs, '/users/')
 api.add_resource(Utilisateur_List, '/user/<string:user>')
 
@@ -167,6 +219,9 @@ api.add_resource(Group_List, '/group/<string:group>')
 
 api.add_resource(All_Coops, '/coops/')
 api.add_resource(Coop_List, '/coop/<string:coop>')
+
+api.add_resource(All_Credits, '/credits/')
+api.add_resource(Credit_List, '/credit/<string:credit>')
 
 if __name__=='__main__':
     
