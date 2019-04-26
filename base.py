@@ -115,7 +115,7 @@ class Coops(db.Model):
 class Credits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     somme = db.Column(db.Integer, unique=False, nullable=False)
-    date_demand = db.Column(db.Integer, unique=False, nullable=False)
+    date_demand = db.Column(db.Integer, unique=True, nullable=False)
     taux = db.Column(db.Integer, unique=False, nullable=False)
     duree = db.Column(db.Integer, unique=False, nullable=False)
     etat = db.Column(db.Integer, unique=False, nullable=False)
