@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_restful import Resource, reqparse, Api
 import os
-from flask.ext.heroku import Heroku
-#from flask_heroku import Heroku	
+#from flask.ext.heroku import Heroku
+from flask_heroku import Heroku	
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,7 +14,11 @@ api = Api(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.config['PROPAGATE_EXCEPTIONS'] = True
-heroku = Heroku(app)
+#heroku = Heroku(app)
+
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#db = SQLAlchemy(app)
 
 from base import db, Utilisateurs, Groups, Coops, Credits
 db.init_app(app)
