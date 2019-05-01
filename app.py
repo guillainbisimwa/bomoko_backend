@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, reqparse, Api
 import os
 from flask.ext.heroku import Heroku
+#from flask_heroku import Heroku	
 
 app = Flask(__name__)
 api = Api(app)
