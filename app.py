@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse, Api
 import os
 #from flask.ext.heroku import Heroku
 #from flask_heroku import Heroku
-from flask_script import Heroku	
+#from flask_script import Heroku	
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,10 +15,10 @@ api = Api(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.config['PROPAGATE_EXCEPTIONS'] = True
-heroku = Heroku(app)
+#heroku = Heroku(app)
 
-#app.config.from_object(os.environ['APP_SETTINGS'])
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object('postgres://uyzphgqenfgwgx:80d1fafe102815c859487e1ee348ae6dc829f3f3600fbc68d73c6f47f976186e@ec2-54-235-208-103.compute-1.amazonaws.com:5432/d26868urngus7k')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #db = SQLAlchemy(app)
 
 from base import db, Utilisateurs, Groups, Coops, Credits

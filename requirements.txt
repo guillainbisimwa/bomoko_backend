@@ -3,3 +3,6 @@ Flask-RESTful
 Flask-SQLAlchemy
 uwsgi
 psycopg2
+alembic
+Flask-Migrate
+Flask-Script
