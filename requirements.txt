@@ -1,6 +1,14 @@
+alembic
 Flask
+Flask-Migrate
+Flask-Script
+Flask-SQLAlchemy
 gunicorn
 itsdangerous
 Jinja2
+Mako
 MarkupSafe
+psycopg2
+python-editor
+SQLAlchemy
 Werkzeug
