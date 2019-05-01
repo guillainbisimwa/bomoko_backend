@@ -2,22 +2,22 @@ from flask import Flask
 from flask_restful import Resource, reqparse, Api
 import os
 #from flask.ext.heroku import Heroku
-from flask_heroku import Heroku	
+#from flask_heroku import Heroku	
 
 app = Flask(__name__)
 api = Api(app)
 #SQL_ALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/pre-registration'
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PROPAGATE_EXCEPTIONS'] = True
 #heroku = Heroku(app)
 
-app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config.from_object(os.environ['APP_SETTINGS'])
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #db = SQLAlchemy(app)
 
 from base import db, Utilisateurs, Groups, Coops, Credits
