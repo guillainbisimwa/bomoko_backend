@@ -1,16 +1,24 @@
 from flask import Flask
 from flask_restful import Resource, reqparse, Api
+# from flask_script import Manager
+# from flask_migrate import Migrate, MigrateCommand
 
 app = Flask(__name__)
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://clwcrpyffyqeyk:d05c4aa9b15db0a99668e3b9512f4a5a88fa8a687ab0baeab233052ba753d3ec@ec2-54-197-234-117.compute-1.amazonaws.com:5432/ddnrqivajudjed'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['PROPAGATE_EXCEPTIONS'] = True
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config['PROPAGATE_EXCEPTIONS'] = True
 
 from base import db, Utilisateurs, Groups, Coops, Credits
 db.init_app(app)
 app.app_context().push()
 db.create_all()
+
+# migrate = Migrate(app, db)
+
+# manager = Manager(app)
+# manager.add_command('db', MigrateCommand)
+
 
 class Utilisateur_List(Resource):
     parser = reqparse.RequestParser()
@@ -226,3 +234,4 @@ api.add_resource(Credit_List, '/credit/<string:credit>')
 if __name__=='__main__':
     
     app.run(debug=True)
+    # manager.run()
