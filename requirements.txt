@@ -1,14 +1,4 @@
-alembic
 Flask
-Flask-Migrate
-Flask-Script
+Flask-RESTful
 Flask-SQLAlchemy
-gunicorn
-itsdangerous
-Jinja2
-Mako
-MarkupSafe
-psycopg2
-python-editor
-SQLAlchemy
-Werkzeug
+uwsgi
