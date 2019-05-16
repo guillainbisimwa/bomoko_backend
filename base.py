@@ -89,7 +89,7 @@ class Coops(db.Model):
     nom = db.Column(db.String(30), unique=True, nullable=False)
     adress = db.Column(db.String(30), unique=False, nullable=False)
     type = db.Column(db.Integer, unique=False, nullable=False)
-    phone_chef = db.Column(db.String(30), unique=False, nullable=False)
+    phone_chef = db.Column(db.String(30), unique=False, nullable=True)
     
     def __init__(self, nom, adress, type, phone_chef):
         self.nom = nom
