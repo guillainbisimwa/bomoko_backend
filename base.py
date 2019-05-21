@@ -119,7 +119,7 @@ class Credits(db.Model):
     taux = db.Column(db.Integer, unique=False, nullable=False)
     duree = db.Column(db.Integer, unique=False, nullable=False)
     etat = db.Column(db.Integer, unique=False, nullable=False)
-    motif = db.Column(db.String(250), unique=False, nullable=False)
+    motif = db.Column(db.String(100), unique=False, nullable=False)
     phone_user = db.Column(db.String(30), unique=False, nullable=False)
     
     def __init__(self, phone_user, somme, date_demand, taux, duree, etat, motif):
