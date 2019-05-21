@@ -5,9 +5,10 @@ from flask_restful import Resource, reqparse, Api
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://clwcrpyffyqeyk:d05c4aa9b15db0a99668e3b9512f4a5a88fa8a687ab0baeab233052ba753d3ec@ec2-54-197-234-117.compute-1.amazonaws.com:5432/ddnrqivajudjed'
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#app.config['PROPAGATE_EXCEPTIONS'] = True
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://clwcrpyffyqeyk:d05c4aa9b15db0a99668e3b9512f4a5a88fa8a687ab0baeab233052ba753d3ec@ec2-54-197-234-117.compute-1.amazonaws.com:5432/ddnrqivajudjed'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db' 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 from base import db, Utilisateurs, Groups, Coops, Credits
 db.init_app(app)
@@ -169,23 +170,24 @@ class All_Coops(Resource):
 
 class Credit_List(Resource):
     parser = reqparse.RequestParser()
+    parser.add_argument('phone_user', type=str, required=False, help='phone_user collection of the credit')
     parser.add_argument('somme', type=int, required=True, help='somme collection of the credit')
     parser.add_argument('date_demand', type=int, required=True, help='date_demand collection of the credit')
     parser.add_argument('taux', type=int, required=True, help='taux collection of the credit')
     parser.add_argument('duree', type=int, required=True, help='duree collection of the credit')
     parser.add_argument('etat', type=int, required=True, help='etat collection of the credit')
     parser.add_argument('motif', type=str, required=True, help='motif collection of the credit')
-    # parser.add_argument('phone_user', type=str, required=False, help='phone_user collection of the credit')
+    # parser.add_argument('id', type=int, required=True, help='Id collection of the credit')
 
     def get(self, credit):
-        item = Credits.find_by_phone_user(credit)
+        item = Credits.find_by_id_(credit)
         if item:
             return item.json()
         return {'Message': 'Credits is not found'}
     
     def post(self, credit):
-        if Credits.find_by_phone_user(credit):
-            return {' Message': 'Credits with the same phone user {} already exists'.format(credit)}
+        #if Credits.find_by_phone_user(credit):
+            #return {' Message': 'Credits with the same phone user {} already exists'.format(credit)}
         args = Credit_List.parser.parse_args()
         item = Credits(credit, args['somme'], args['date_demand'], args['taux'], args['duree'], args['etat'], args['motif'])
         item.save_to()
@@ -193,7 +195,7 @@ class Credit_List(Resource):
         
     def put(self, credit):
         args = Credit_List.parser.parse_args()
-        item = Credits.find_by_phone_user(credit)
+        item = Credits.find_by_id_(credit)
         if item:
             item.somme = args['somme']
             item.date_demand = args['date_demand']
@@ -205,10 +207,10 @@ class Credit_List(Resource):
 
             item.save_to()
             return {'Credits': item.json()}
-        return {' Message': 'Credit with the phone {} does not exist'.format(credit)}
+        return {' Message': 'Credit with the id {} does not exist'.format(credit)}
 
     def delete(self, credit):
-        item  = Credits.find_by_phone_user(credit)
+        item  = Credits.find_by_id_(credit)
         if item:
             item.delete_()
             return {'Message': '{} has been deleted from records'.format(credit)}

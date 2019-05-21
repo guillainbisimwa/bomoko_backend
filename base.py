@@ -59,7 +59,7 @@ class Groups(db.Model):
     nom = db.Column(db.String(30), unique=True, nullable=False)
     adress = db.Column(db.String(30), unique=False, nullable=False)
     type = db.Column(db.Integer, unique=False, nullable=False)
-    phone_chef = db.Column(db.String(30), unique=False, nullable=False)
+    phone_chef = db.Column(db.String(30), unique=False, nullable=True)
     id_coop = db.Column(db.String(30), unique=False, nullable=True)
 
     def __init__(self, nom, adress, type, phone_chef, id_coop):
@@ -115,28 +115,32 @@ class Coops(db.Model):
 class Credits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     somme = db.Column(db.Integer, unique=False, nullable=False)
-    date_demand = db.Column(db.Integer, unique=True, nullable=False)
+    date_demand = db.Column(db.Integer, unique=False, nullable=False)
     taux = db.Column(db.Integer, unique=False, nullable=False)
     duree = db.Column(db.Integer, unique=False, nullable=False)
     etat = db.Column(db.Integer, unique=False, nullable=False)
     motif = db.Column(db.String(30), unique=False, nullable=False)
     phone_user = db.Column(db.String(30), unique=False, nullable=False)
     
-    def __init__(self, somme, date_demand, taux, duree, etat, motif, phone_user):
+    def __init__(self, phone_user, somme, date_demand, taux, duree, etat, motif):
+        self.phone_user = phone_user        
         self.somme = somme
         self.date_demand = date_demand
         self.taux = taux
         self.duree = duree
         self.etat = etat
         self.motif = motif
-        self.phone_user = phone_user
 
     def json(self):
-        return {'somme' : self.somme, 'date_demand' : self.date_demand, 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif, 'phone_user' : self.phone_user,'id' : self.id}
+        return {'id' : self.id, 'phone_user' : self.phone_user, 'somme' : self.somme, 'date_demand' : self.date_demand, 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif}
     
     @classmethod
     def find_by_phone_user(cls, phone_user):
         return cls.query.filter_by(phone_user=phone_user).first()
+
+    @classmethod
+    def find_by_id_(cls, id):
+        return cls.query.filter_by(id=id).first()
     
     def save_to(self):
         db.session.add(self)
@@ -145,5 +149,3 @@ class Credits(db.Model):
     def delete_(self):
         db.session.delete(self)
         db.session.commit()
-    
-
