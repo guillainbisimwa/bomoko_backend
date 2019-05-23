@@ -172,12 +172,11 @@ class Credit_List(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('phone_user', type=str, required=False, help='phone_user collection of the credit')
     parser.add_argument('somme', type=int, required=True, help='somme collection of the credit')
-    parser.add_argument('date_demand', type=int, required=True, help='date_demand collection of the credit')
+    # parser.add_argument('date_demand', type=int, required=True, help='date_demand collection of the credit')
     parser.add_argument('taux', type=int, required=True, help='taux collection of the credit')
     parser.add_argument('duree', type=int, required=True, help='duree collection of the credit')
     parser.add_argument('etat', type=int, required=True, help='etat collection of the credit')
     parser.add_argument('motif', type=str, required=True, help='motif collection of the credit')
-    # parser.add_argument('id', type=int, required=True, help='Id collection of the credit')
 
     def get(self, credit):
         item = Credits.find_by_id_(credit)
@@ -189,7 +188,7 @@ class Credit_List(Resource):
         #if Credits.find_by_phone_user(credit):
             #return {' Message': 'Credits with the same phone user {} already exists'.format(credit)}
         args = Credit_List.parser.parse_args()
-        item = Credits(credit, args['somme'], args['date_demand'], args['taux'], args['duree'], args['etat'], args['motif'])
+        item = Credits(credit, args['somme'], args['taux'], args['duree'], args['etat'], args['motif'])
         item.save_to()
         return item.json()
         
@@ -198,7 +197,7 @@ class Credit_List(Resource):
         item = Credits.find_by_id_(credit)
         if item:
             item.somme = args['somme']
-            item.date_demand = args['date_demand']
+            # item.date_demand = args['date_demand']
             item.taux = args['taux']
             item.duree = args['duree']
             item.etat = args['etat']

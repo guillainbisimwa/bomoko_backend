@@ -1,3 +1,4 @@
+import datetime
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
@@ -115,24 +116,29 @@ class Coops(db.Model):
 class Credits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     somme = db.Column(db.Integer, unique=False, nullable=False)
-    date_demand = db.Column(db.Integer, unique=False, nullable=False)
+    # date_demand = db.Column(db.Integer, unique=False, nullable=False)
+    date_demand = db.Column(db.DateTime, default=datetime.datetime.utcnow())
+
     taux = db.Column(db.Integer, unique=False, nullable=False)
     duree = db.Column(db.Integer, unique=False, nullable=False)
     etat = db.Column(db.Integer, unique=False, nullable=False)
     motif = db.Column(db.String(100), unique=False, nullable=False)
     phone_user = db.Column(db.String(30), unique=False, nullable=False)
     
-    def __init__(self, phone_user, somme, date_demand, taux, duree, etat, motif):
+    def __init__(self, phone_user, somme, taux, duree, etat, motif):
         self.phone_user = phone_user        
         self.somme = somme
-        self.date_demand = date_demand
+        # self.date_demand = date_demand
         self.taux = taux
         self.duree = duree
         self.etat = etat
         self.motif = motif
 
     def json(self):
-        return {'id' : self.id, 'phone_user' : self.phone_user, 'somme' : self.somme, 'date_demand' : self.date_demand, 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif}
+        # timestamp
+        # strftime('%Y-%m-%d %H%M%S')
+        # fromtimestamp(ts)
+        return {'id' : self.id, 'phone_user' : self.phone_user, 'somme' : self.somme, 'date_demand' : self.date_demand.strftime('%d-%m-%Y'), 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif}
     
     @classmethod
     def find_by_phone_user(cls, phone_user):
