@@ -5,7 +5,7 @@ from flask_restful import Resource, reqparse, Api
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://clwcrpyffyqeyk:d05c4aa9b15db0a99668e3b9512f4a5a88fa8a687ab0baeab233052ba753d3ec@ec2-54-197-234-117.compute-1.amazonaws.com:5432/ddnrqivajudjed'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://chyhqhyiskxzou:36a8f3f0f588146f14dd3ec8e6c6d9d46c524d1af01a62e7f623752d750727fe@ec2-54-83-205-27.compute-1.amazonaws.com:5432/d1c8h5ct49kikn'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db' 
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['PROPAGATE_EXCEPTIONS'] = True

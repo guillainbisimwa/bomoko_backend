@@ -186,7 +186,7 @@ class Echeances(db.Model):
     
     @classmethod
     def find_by_id_credits(cls, id):
-        return cls.query.filter_by(id_credit=id_credit).first()
+        return cls.query.filter_by(id_credit=id_credit).all()
     
     def save_to(self):
         db.session.add(self)
