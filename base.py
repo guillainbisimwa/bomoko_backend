@@ -135,10 +135,11 @@ class Credits(db.Model):
         self.motif = motif
 
     def json(self):
+        # https://stackoverflow.com/questions/35337299/python-datetime-to-float-with-millisecond-precision
         # timestamp
         # strftime('%Y-%m-%d %H%M%S')
         # fromtimestamp(ts)
-        return {'id' : self.id, 'phone_user' : self.phone_user, 'somme' : self.somme, 'date_demand' : self.date_demand.strftime('%d-%m-%Y'), 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif}
+        return {'id' : self.id, 'phone_user' : self.phone_user, 'somme' : self.somme, 'date_demand' : self.date_demand.strftime('%d-%m-%Y'),'date_demand_full' : self.date_demand.timestamp(), 'taux' : self.taux, 'duree' : self.duree, 'etat' : self.etat, 'motif' : self.motif}
     
     @classmethod
     def find_by_phone_user(cls, phone_user):
@@ -147,6 +148,45 @@ class Credits(db.Model):
     @classmethod
     def find_by_id_(cls, id):
         return cls.query.filter_by(id=id).first()
+    
+    def save_to(self):
+        db.session.add(self)
+        db.session.commit()
+        
+    def delete_(self):
+        db.session.delete(self)
+        db.session.commit()
+
+# Echeance
+class Echeances(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    somme = db.Column(db.Float, unique=False, nullable=False)
+    date_payement = db.Column(db.DateTime)
+
+    # interet = db.Column(db.Float, unique=False, nullable=False)
+    etat = db.Column(db.Integer, unique=False, nullable=False)
+    id_credit = db.Column(db.Integer, unique=False, nullable=False)
+
+    def __init__(self, somme, date_payement, etat, id_credit):
+        self.somme = somme
+        self.date_payement = date_payement
+        self.id_credit = id_credit
+        self.etat = etat
+
+    def json(self):
+        # https://stackoverflow.com/questions/35337299/python-datetime-to-float-with-millisecond-precision
+        # timestamp
+        # strftime('%Y-%m-%d %H%M%S')
+        # fromtimestamp(ts)
+        return {'id' : self.id, 'somme' : self.somme, 'date_payement' : self.date_payement.strftime('%d-%m-%Y'), 'etat' : self.etat, 'id_credit' : self.id_credit}
+    
+    @classmethod
+    def find_by_id_(cls, id):
+        return cls.query.filter_by(id=id).first()
+    
+    @classmethod
+    def find_by_id_credits(cls, id):
+        return cls.query.filter_by(id_credit=id_credit).all()
     
     def save_to(self):
         db.session.add(self)

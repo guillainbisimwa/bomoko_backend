@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://clwcrpyffyqeyk:d05c4aa9b15db
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['PROPAGATE_EXCEPTIONS'] = True
 
-from base import db, Utilisateurs, Groups, Coops, Credits
+from base import db, Utilisateurs, Groups, Coops, Credits, Echeances
 db.init_app(app)
 app.app_context().push()
 db.create_all()
@@ -219,6 +219,56 @@ class All_Credits(Resource):
     def get(self):
         return {'Credits': list(map(lambda x: x.json(), Credits.query.all()))}
 
+class Echeance_List(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('somme', type=float, required=True, help='somme collection of the echeance')
+    # parser.add_argument('date_payement', type=str, help='date_payement collection of the echeance')
+    parser.add_argument('date_payement', type=lambda x: datetime.strftime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
+    # parser.add_argument('date_payement', type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
+    parser.add_argument('id_credit', type=int, required=True, help='id_credit collection of the echeance')
+    parser.add_argument('etat', type=int, required=True, help='etat collection of the echeance')
+
+    def get(self, echeance):
+        item = Echeances.find_by_id_credits(echeance)
+        if item:
+            return item.json()
+        return {'Message': 'Echeances is not found'}
+    
+    def post(self, echeance):
+        #if Echeances.find_by_phone_user(echeance):
+            #return {' Message': 'Echeances with the same phone user {} already exists'.format(echeance)}
+        args = Echeance_List.parser.parse_args()
+        print("Ignored  {} ",format(args['date_payement']))
+
+        item = Echeances(echeance, args['somme'], args['date_payement'], args['id_credit'], args['etat'])
+        
+        item.save_to()
+        return item.json()
+        
+    def put(self, echeance):
+        args = Echeance_List.parser.parse_args()
+        item = Echeances.find_by_id_(echeance)
+        if item:
+            item.somme = args['somme']
+            item.date_payement = args['date_payement']
+            item.id_credit = args['id_credit']
+            item.etat = args['etat']
+            
+            item.save_to()
+            return {'Echeances': item.json()}
+        return {' Message': 'Echeance with the id {} does not exist'.format(echeance)}
+
+    def delete(self, echeance):
+        item  = Echeances.find_by_id_credits(echeance)
+        if item:
+            item.delete_()
+            return {'Message': '{} has been deleted from records'.format(echeance)}
+        return {'Message': '{} is already not on the list'.format(echeance)}
+    
+class All_Echeances(Resource):
+    def get(self):
+        return {'Echeances': list(map(lambda x: x.json(), Echeances.query.all()))}
+
 
 api.add_resource(All_Utilisateurs, '/users/')
 api.add_resource(Utilisateur_List, '/user/<string:user>')
@@ -231,6 +281,9 @@ api.add_resource(Coop_List, '/coop/<string:coop>')
 
 api.add_resource(All_Credits, '/credits/')
 api.add_resource(Credit_List, '/credit/<string:credit>')
+
+api.add_resource(All_Echeances, '/echeances/')
+api.add_resource(Echeance_List, '/echeance/<string:echeance>')
 
 if __name__=='__main__':
     
