@@ -223,7 +223,7 @@ class Echeance_List(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('somme', type=float, required=True, help='somme collection of the echeance')
     # parser.add_argument('date_payement', type=str, help='date_payement collection of the echeance')
-    parser.add_argument('date_payement', type=lambda x: datetime.strftime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
+    parser.add_argument('date_payement', type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
     # parser.add_argument('date_payement', type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
     parser.add_argument('id_credit', type=int, required=True, help='id_credit collection of the echeance')
     parser.add_argument('etat', type=int, required=True, help='etat collection of the echeance')
