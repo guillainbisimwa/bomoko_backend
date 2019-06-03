@@ -190,6 +190,18 @@ class Credit_List(Resource):
         args = Credit_List.parser.parse_args()
         item = Credits(credit, args['somme'], args['taux'], args['duree'], args['etat'], args['motif'])
         item.save_to()
+        item_saved = Credits.find_by_id_(credit)
+        somme_tot = item.somme + ((item.somme * item.taux)/100)
+        # Find single echeance item
+        single_somme = somme_tot / item.duree
+        #date_ech_tot = Credits.addMonths(item.date_demand, item.duree)
+        for i in range(0,item.duree):
+            #print("Mois: , ", format(i))
+            date_ech_tot = Credits.addMonths(item.date_demand, i+1)
+            item_ech = Echeances(single_somme, date_ech_tot, 0, item.id)
+            item_ech.save_to_ech(item.id)
+
+        
         return item.json()
         
     def put(self, credit):
