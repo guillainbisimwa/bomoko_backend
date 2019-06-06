@@ -190,18 +190,6 @@ class Credit_List(Resource):
         args = Credit_List.parser.parse_args()
         item = Credits(credit, args['somme'], args['taux'], args['duree'], args['etat'], args['motif'])
         item.save_to()
-        item_saved = Credits.find_by_id_(credit)
-        somme_tot = item.somme + ((item.somme * item.taux)/100)
-        # Find single echeance item
-        single_somme = somme_tot / item.duree
-        #date_ech_tot = Credits.addMonths(item.date_demand, item.duree)
-        for i in range(0,item.duree):
-            #print("Mois: , ", format(i))
-            date_ech_tot = Credits.addMonths(item.date_demand, i+1)
-            item_ech = Echeances(single_somme, date_ech_tot, 0, item.id)
-            item_ech.save_to_ech(item.id)
-
-        
         return item.json()
         
     def put(self, credit):
@@ -233,11 +221,9 @@ class All_Credits(Resource):
 
 class Echeance_List(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('somme', type=float, required=True, help='somme collection of the echeance')
     # parser.add_argument('date_payement', type=str, help='date_payement collection of the echeance')
-    parser.add_argument('date_payement', type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
     # parser.add_argument('date_payement', type=lambda x: datetime.strptime(x,'%Y-%m-%dT%H:%M:%S'), help='date_payement collection of the echeance')
-    parser.add_argument('id_credit', type=int, required=True, help='id_credit collection of the echeance')
+    parser.add_argument('id_credit', type=int, required=False, help='id_credit collection of the echeance')
     parser.add_argument('etat', type=int, required=True, help='etat collection of the echeance')
 
     def get(self, echeance):
@@ -247,15 +233,26 @@ class Echeance_List(Resource):
         return {'Message': 'Echeances is not found'}
     
     def post(self, echeance):
-        #if Echeances.find_by_phone_user(echeance):
-            #return {' Message': 'Echeances with the same phone user {} already exists'.format(echeance)}
+        if Echeances.find_by_id_(echeance):
+            return {' Message': 'Echeances with the same id credit {} already exists'.format(echeance)}
         args = Echeance_List.parser.parse_args()
-        print("Ignored  {} ",format(args['date_payement']))
+        # print("Ignored  {} ",format(args['date_payement']))
 
-        item = Echeances(echeance, args['somme'], args['date_payement'], args['id_credit'], args['etat'])
-        
-        item.save_to()
-        return item.json()
+        item_credit = Credits.find_by_id_(echeance)
+        somme_tot = item_credit.somme + ((item_credit.somme  * item_credit.taux)/100)
+        # Find single echeance item
+        single_somme = somme_tot / item_credit.duree
+        #date_ech_tot = Credits.addMonths(item.date_demand, item.duree)
+        for i in range(0,item_credit.duree):
+            #print("Mois: , ", format(i))
+            date_ech_tot = Credits.addMonths(item_credit.date_demand, i+1)
+            item_ech = Echeances(single_somme, date_ech_tot, 1, item_credit.id)
+            item_ech.save_to_ech(item_credit.id)
+        # somme, date_payement, etat, id_credit
+        # item_echeance = Echeances(echeance, args['etat'])
+        print("Here ", echeance)
+        # item.save_to()
+        return item_credit.json()
         
     def put(self, echeance):
         args = Echeance_List.parser.parse_args()

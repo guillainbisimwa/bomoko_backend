@@ -190,8 +190,8 @@ class Echeances(db.Model):
         return {'id' : self.id, 'somme' : self.somme, 'date_payement' : self.date_payement.strftime('%d-%m-%Y'), 'etat' : self.etat, 'id_credit' : self.id_credit}
     
     @classmethod
-    def find_by_id_(cls, id):
-        return cls.query.filter_by(id=id).first()
+    def find_by_id_(cls, id_credit):
+        return cls.query.filter_by(id_credit=id_credit).first()
     
     @classmethod
     def find_by_id_credits(cls, id):
