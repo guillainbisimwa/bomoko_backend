@@ -5,12 +5,12 @@ from flask_restful import Resource, reqparse, Api
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://chyhqhyiskxzou:36a8f3f0f588146f14dd3ec8e6c6d9d46c524d1af01a62e7f623752d750727fe@ec2-54-83-205-27.compute-1.amazonaws.com:5432/d1c8h5ct49kikn'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db' 
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['PROPAGATE_EXCEPTIONS'] = True
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://chyhqhyiskxzou:36a8f3f0f588146f14dd3ec8e6c6d9d46c524d1af01a62e7f623752d750727fe@ec2-54-83-205-27.compute-1.amazonaws.com:5432/d1c8h5ct49kikn'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///base.db' 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
-from base import db, Utilisateurs, Groups, Coops, Credits, Echeances
+from base import db, Utilisateurs, Groups, Coops, Credits, Echeances, Products
 db.init_app(app)
 app.app_context().push()
 db.create_all()
@@ -278,6 +278,58 @@ class All_Echeances(Resource):
     def get(self):
         return {'Echeances': list(map(lambda x: x.json(), Echeances.query.all()))}
 
+# Products
+class Product_List(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('phone_user', type=str, required=False, help='phone_user collection of the credit')
+    parser.add_argument('nom_product', type=str, required=False, help='nom_product collection of the credit')
+    parser.add_argument('details_product', type=str, required=False, help='details_product collection of the credit')
+    parser.add_argument('qt_product', type=int, required=True, help='qt_product collection of the credit')
+    parser.add_argument('px_product', type=int, required=True, help='px_product collection of the credit')
+    parser.add_argument('unite_mesure_product', type=str, required=True, help='unite_mesure_product collection of the credit')
+    parser.add_argument('etat', type=int, required=True, help='etat collection of the credit')
+
+    def get(self, product):
+        item = Products.find_by_id_(product)
+        if item:
+            return item.json()
+        return {'Message': 'Products is not found'}
+    
+    def post(self, product):
+        #if Products.find_by_phone_user(product):
+            #return {' Message': 'Products with the same phone user {} already exists'.format(product)}
+        args = Product_List.parser.parse_args()
+        item = Products(product,args['nom_product'],args['details_product'],args['qt_product'],args['px_product'],args['unite_mesure_product'],args['etat'])
+        item.save_to()
+        return item.json()
+        
+    def put(self, product):
+        args = Product_List.parser.parse_args()
+        item = Products.find_by_id_(product)
+        if item:
+            item.nom_product = args['nom_product']
+            item.details_product = args['details_product']
+            item.qt_product = args['qt_product']
+            item.px_product = args['px_product']
+            item.unite_mesure_product = args['unite_mesure_product']
+            item.etat = args['etat']
+            item.phone_user = args['phone_user']
+
+            item.save_to()
+            return {'Products': item.json()}
+        return {' Message': 'Product with the id {} does not exist'.format(product)}
+
+    def delete(self, product):
+        item  = Products.find_by_id_(product)
+        if item:
+            item.delete_()
+            return {'Message': '{} has been deleted from records'.format(product)}
+        return {'Message': '{} is already not on the list'.format(product)}
+    
+class All_Products(Resource):
+    def get(self):
+        return {'Products': list(map(lambda x: x.json(), Products.query.all()))}
+
 
 api.add_resource(All_Utilisateurs, '/users/')
 api.add_resource(Utilisateur_List, '/user/<string:user>')
@@ -293,6 +345,9 @@ api.add_resource(Credit_List, '/credit/<string:credit>')
 
 api.add_resource(All_Echeances, '/echeances/')
 api.add_resource(Echeance_List, '/echeance/<string:echeance>')
+
+api.add_resource(All_Products, '/products/')
+api.add_resource(Product_List, '/product/<string:product>')
 
 if __name__=='__main__':
     

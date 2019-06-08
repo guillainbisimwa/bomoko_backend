@@ -209,21 +209,21 @@ class Echeances(db.Model):
     def delete_(self):
         db.session.delete(self)
         db.session.commit()
-        
+
 # Products
 class Products(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom_product = db.Column(db.String(40), unique=False, nullable=False)
     details_product = db.Column(db.String(100), unique=False, nullable=False)
     date_create_product = db.Column(db.DateTime, default=datetime.datetime.utcnow())
-    qt_product = db.Column(db.Float, unique=False, nullable=False)
-    px_product = db.Column(db.Float, unique=False, nullable=False)
+    qt_product = db.Column(db.Integer, unique=False, nullable=False)
+    px_product = db.Column(db.Integer, unique=False, nullable=False)
     unite_mesure_product = db.Column(db.String(30), unique=False, nullable=False)
-    etat = db.Column(db.Integer, unique=False, nullable=False)
     etat = db.Column(db.Integer, unique=False, nullable=False)
     phone_user = db.Column(db.String(30), unique=False, nullable=False)
     
-    def __init__(self, nom_product, details_product, qt_product, px_product, unite_mesure_product, phone_user):
+    def __init__(self, phone_user, nom_product, details_product, qt_product, px_product, unite_mesure_product, etat):
+        self.phone_user = phone_user
         self.nom_product = nom_product
         self.details_product = details_product
         # self.date_create_product = date_create_product
@@ -231,7 +231,6 @@ class Products(db.Model):
         self.px_product = px_product
         self.unite_mesure_product = unite_mesure_product
         self.etat = etat
-        self.phone_user = phone_user
 
     def json(self):
         # https://stackoverflow.com/questions/35337299/python-datetime-to-float-with-millisecond-precision
@@ -240,6 +239,7 @@ class Products(db.Model):
         # fromtimestamp(ts)
         return {
             'id' : self.id, 
+            'phone_user' : self.phone_user,
             'nom_product' : self.nom_product, 
             'details_product' : self.details_product, 
             'date_create_product' : self.date_create_product.strftime('%d-%m-%Y'),
@@ -247,8 +247,7 @@ class Products(db.Model):
             'qt_product' : self.qt_product, 
             'px_product' : self.px_product, 
             'unite_mesure_product' : self.unite_mesure_product,
-            'etat' : self.etat,
-            'phone_user' : self.phone_user
+            'etat' : self.etat
         }
     
     @classmethod
@@ -266,3 +265,22 @@ class Products(db.Model):
     def delete_(self):
         db.session.delete(self)
         db.session.commit()
+
+# Resources
+
+# id
+# id_user
+# title
+# s_title
+# photo
+# content
+# date_created
+
+# Portefeuil
+# id
+# id_user
+# title
+# s_title
+# photo
+# content
+# date_created
